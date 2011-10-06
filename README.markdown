@@ -11,8 +11,7 @@ There is no usage, proposed usage as follows:
 
 ```
 map.new({
-	// Should it detect which map we using or define?
-	'pins': ['London', 'Paris', 'Singapore'],
+	'pins': ['London', 'Paris', 'Singapore'], // Arguments will take string and attempt to reverse geocode (if available) or take an object containing lat/lng
 	'polylines': [
 		{from: 'London', to: 'Cambridge', color: '#BADA55', width: '2px'}
 	],
