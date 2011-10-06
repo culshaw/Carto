@@ -8,20 +8,7 @@
 
 /*
 
-map.new({
-	'markers': ['London', 'Paris', 'Singapore'], // Arguments will take string and attempt to reverse geocode (if available) or take an object containing lat/lng
-	'polylines': [
-		{from: 'London', to: 'Cambridge', color: '#BADA55', width: '2px'}
-	],
-	'directions': {
-		from: 'London',
-		to: 'Nottingham',
-		via: [
-			'Leicester',
-			'Loughborough'
-		]
-	}
-});
+Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'});
 
 /**/
 
@@ -147,5 +134,3 @@ map.new({
 	
 	if(!window.Carto){window.Carto=Cartograph;}//We create a shortcut for our framework, we can call the methods by $$.method();
 })();
-
-Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'});

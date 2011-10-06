@@ -1,29 +1,22 @@
-# Maps // working name
+# Carto
 
-Maps is intending to put a wrapper above certain javascript map providers in order to make it simpler to create applications with their API's
+Carto is a wrapper that sits on top of certain javascript map providers in order to make it simpler to create applications with their API's
 
 *It’s a work in progress (e.g. beta), so please be kind and 
 contribute! Patches are welcome, but aren't guaranteed to make it in.*
 
 ## Usage
 
-There is no usage, proposed usage as follows:
+Very alpha usage as follows:
 
 ```
-map.new({
-	'pins': ['London', 'Paris', 'Singapore'], // Arguments will take string and attempt to reverse geocode (if available) or take an object containing lat/lng
-	'polylines': [
-		{from: 'London', to: 'Cambridge', color: '#BADA55', width: '2px'}
-	],
-	'directions': {
-		from: 'London',
-		to: 'Nottingham',
-		via: [
-			'Leicester',
-			'Loughborough'
-		]
+Carto.init(
+	{
+		center: 'London, UK', // Map center
+		markers: ['London, UK', 'Paris'], // Pins
+		el: '#main' // Target element
 	}
-});
+);
 ```
 
 ## Contributing
@@ -33,9 +26,10 @@ submit a pull request.
 
 ## TODOs
 
-* Implement basic framework
+* Implement more features
 * Determine best way to piggyback map api's
-* Finish test suite
+* Begin test suite
+* Make docs
 
-Maps is (c) 2011 Ian Culshaw and may be freely distributed under the MIT license.
+Carto is (c) 2011 Ian Culshaw and may be freely distributed under the MIT license.
 See the `MIT-LICENSE` file.
