@@ -22,11 +22,31 @@
 
 	<!-- Sample map libraries for testing -->
 	
-	<!--<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+	<!--<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>-->
 	<!--<script src="http://api.maps.ovi.com/jsl.js" type="text/javascript" charset="utf-8"></script>-->
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
   	
   	<!-- Load Carto -->
   	<script src="Carto.js"></script>  
+  	
+  	<script>
+  		Carto.init(
+			{
+				zoom: 4,
+				center: 'London, UK', // Map center
+				markers: [
+					'London, UK',
+					'Paris', 
+					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh',
+						window: { text: '', style: '' }
+					},
+					{location: 'Llandudno, Wales', image: '', name: 'Llandudno',
+						window: { text: '', style: '' }
+					}
+				], // Pins
+				el: '#main' // Target element
+			}
+		);
+  	</script>
 </body>
 </html>
