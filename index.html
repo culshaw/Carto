@@ -35,12 +35,12 @@
 				zoom: 4,
 				center: 'London, UK', // Map center
 				markers: [
-					'London, UK',
+					'London, UK', // String based marker (automatic geocoding)
 					'Paris', 
-					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh',
-						window: { text: '', style: '' }
+					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
+						window: { text: '', style: '' } // Info window
 					},
-					{location: 'Llandudno, Wales', image: '', name: 'Llandudno',
+					{location: 'Llandudno, Wales', image: '', name: 'Llandudno', // Location based object marker (automatic geocode)
 						window: { text: '', style: '' }
 					}
 				], // Pins
