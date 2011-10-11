@@ -27,11 +27,34 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 			
 			this.polylines = options.polylines || false;
 			this.directions = options.directions || false;/**/
-			this.el = options.el || false;
+			
+			// Detect map type
+			this.type = options.type || false;
+			this.el = options.element || false;
 			this.center = options.center || false;
 			this.zoom = options.zoom || 8;
-			
-			this.map = this.detectMap();
+			this.markers = options.markers || [];
+						
+			switch(this.type) { 
+				case 'gmap':
+					var script = document.createElement("script");
+					script.type = "text/javascript";
+					script.src = "http://maps.googleapis.com/maps/api/js?sensor=false&callback=Carto.setupMap";
+					document.body.appendChild(script);
+				    var obj = this;
+				break;
+				case 'ovi':
+				case 'bing':
+					alert('not supported');
+				break;
+				default:
+					this.detectMap();
+					this.getMapObj();
+					this.setupMap();
+			}
+		},
+		setupMap: function() {
+			this.getMapObj();
 			// If a text string is given we need to geocode the string to get the lat/long
 			if(typeof this.center == 'string') {
 				var obj = this;
@@ -41,7 +64,7 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 							obj.center = results[0].geometry.location;
 							obj.actualMap = obj.draw();
 							if(obj.actualMap) {
-								obj.pushMarkers(options.markers, obj.actualMap);
+								obj.pushMarkers(obj.markers, obj.actualMap);
 								return obj;
 							}
 				        });/**/
@@ -57,10 +80,10 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 		pushMarkers: function(markers, theMap) {		
 			var markerLength = markers.length;
 			for(var i = 0; i < markerLength; i++) {
-				if(typeof markers[i] == 'object') { // we have a full object to interpret
+				if(typeof markers[i] === 'object') { // we have a full object to interpret
 					if(markers[i].location) {
 						var obj = this;
-						var markerInfo = markers[i]; // We lose the information in this marker after the request is sent and the loop finishes.
+						var markerInfo = markers[i]; // TODO: Pass marker info/object through to geocode callback (somehow)
 						this.geocoder.geocode( {'address': markers[i].location }, function(results, status) {
 							obj.markers.push(new google.maps.Marker({
 								position: results[0].geometry.location, 
@@ -69,39 +92,45 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 							}));
 						});
 					} else {
-						this.markers.push(new google.maps.Marker({
-							position: new google.maps.LatLng(markers[i].lat, markers[i].long), 
-							map: theMap, 
-							title: markers[i].name
-						})); 
+						var newMarker = new google.maps.Marker({ position: new google.maps.LatLng(markers[i].lat, markers[i].long), map: theMap, title: markers[i].name });
+						
+						// Basic infowindow implementation to make sure info is being retained in the marker
+						var infowindow = new google.maps.InfoWindow({
+							content: markers[i].iwindow.content
+						});
+						google.maps.event.addListener(newMarker, 'click', function() { infowindow.open(theMap,newMarker); });
+						this.markers.push(newMarker); 
 					}					 
 				} else {
 					var obj = this;
+					var markerInfo = markers[i]; // We lose the information in this marker after the request is sent and the loop finishes.
 					this.geocoder.geocode( {'address': markers[i] }, function(results, status) {
-						obj.markers.push(new google.maps.Marker({
+						var newMarker = new google.maps.Marker({
 						      position: results[0].geometry.location, 
-						      map: theMap, 
-						      title:markers[i]
-						}));
-					 });/**/			       
+						      map: theMap,
+						      title:markerInfo.name
+						});
+						google.maps.event.addListener(newMarker, 'click', function() { console.log(newMarker.title); });
+						obj.markers.push(newMarker);
+					 });       
 				}
 			}
 		},
 		authenticate: function() {},
 		mapFunctions: function() {},
 		detectMap: function() {
-			// Returns the map object we're going to do a shim (eventually).
-			
-			// Detect map type
+			// Legacy function in case they choose to include the maps themself
 			this.type = (window.google)?'gmap':(window.Microsoft)?'bing':(window.ovi)?'ovi':false;
 			//Return false if none of our maps are supported
 			if(this.type === false) { this.callError('unsupported'); return false; }
-			
+		},
+		
+		getMapObj: function() {
 			// Grasp the map type and associate
 			switch (this.type) {
 				case 'gmap':
 					this.geocoder = new google.maps.Geocoder();
-					return window.google.maps;
+					this.map = window.google.maps;
 				break;
 				case 'bing':
 					return window.Microsoft.Maps;
@@ -110,7 +139,7 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 					return window.ovi.mapsapi;
 				break;
 			}
-		
+			return false;
 			
 			/*return  window.google       || // Sample shim from paul irish for requestAnimationFrame
               window.webkitRequestAnimationFrame || 

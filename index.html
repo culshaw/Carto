@@ -24,7 +24,7 @@
 	
 	<!--<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>-->
 	<!--<script src="http://api.maps.ovi.com/jsl.js" type="text/javascript" charset="utf-8"></script>-->
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>-->
   	
   	<!-- Load Carto -->
   	<script src="Carto.js"></script>  
@@ -32,19 +32,21 @@
   	<script>
   		Carto.init(
 			{
+				type: 'gmap',
 				zoom: 4,
+				sensor: true,
 				center: 'London, UK', // Map center
 				markers: [
 					'London, UK', // String based marker (automatic geocoding)
 					'Paris', 
 					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
-						window: { text: '', style: '' } // Info window
+						iwindow: { content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">Uluru</h1><div id="bodyContent"><p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large sandstone rock formation in the southern part of the Northern Territory, central Australia. It lies 335 km (208 mi) south west of the nearest large town, Alice Springs; 450 km (280 mi) by road. Kata Tjuta and Uluru are the two major features of the Uluru - Kata Tjuta National Park. Uluru is sacred to the Pitjantjatjara and Yankunytjatjara, the Aboriginal people of the area. It has many springs, waterholes, rock caves and ancient paintings. Uluru is listed as a World Heritage Site.</p><p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">http://en.wikipedia.org/w/index.php?title=Uluru</a> (last visited June 22, 2009).</p></div></div>' } // Info window
 					},
 					{location: 'Llandudno, Wales', image: '', name: 'Llandudno', // Location based object marker (automatic geocode)
-						window: { text: '', style: '' }
+						iwindow: { text: '', style: '' }
 					}
 				], // Pins
-				el: '#main' // Target element
+				element: '#main' // Target element
 			}
 		);
   	</script>
