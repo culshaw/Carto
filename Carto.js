@@ -83,17 +83,31 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 				if(typeof markers[i] === 'object') { // we have a full object to interpret
 					if(markers[i].location) {
 						var obj = this;
-						var markerInfo = markers[i]; // TODO: Pass marker info/object through to geocode callback (somehow)
-						this.geocoder.geocode( {'address': markers[i].location }, function(results, status) {
+						this.geocodeAddr(markers[i].location, function(location, markerAddress) {
+							var newMarker = new google.maps.Marker({
+								position: location, 
+								map: theMap,
+								title: markers[i].name
+							});
+							
+							var infowindow = new google.maps.InfoWindow({
+								content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + markerAddress + '</h1></div>'
+							});
+							
+							google.maps.event.addListener(newMarker, 'click', function() {  infowindow.open(theMap,newMarker); });
+							obj.markers.push(newMarker);
+						});
+						
+						//var markerInfo = markers[i]; // TODO: Pass marker info/object through to geocode callback (somehow)
+						/*this.geocoder.geocode( {'address': markers[i].location }, function(results, status) {
 							obj.markers.push(new google.maps.Marker({
 								position: results[0].geometry.location, 
 								map: theMap,
 								title: markerInfo.name
 							}));
-						});
+						});/**/
 					} else {
 						var newMarker = new google.maps.Marker({ position: new google.maps.LatLng(markers[i].lat, markers[i].long), map: theMap, title: markers[i].name });
-						
 						// Basic infowindow implementation to make sure info is being retained in the marker
 						var infowindow = new google.maps.InfoWindow({
 							content: markers[i].iwindow.content
@@ -103,19 +117,32 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 					}					 
 				} else {
 					var obj = this;
-					var markerInfo = markers[i]; // We lose the information in this marker after the request is sent and the loop finishes.
-					this.geocoder.geocode( {'address': markers[i] }, function(results, status) {
+					this.geocodeAddr(markers[i], function(location, markerAddress) {
 						var newMarker = new google.maps.Marker({
-						      position: results[0].geometry.location, 
+						      position: location, 
 						      map: theMap,
-						      title:markerInfo.name
+						      title:markerAddress
 						});
-						google.maps.event.addListener(newMarker, 'click', function() { console.log(newMarker.title); });
+						
+						var infowindow = new google.maps.InfoWindow({
+							content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + markerAddress + '</h1></div>'
+						});
+						
+						google.maps.event.addListener(newMarker, 'click', function() { infowindow.open(theMap,newMarker); });
 						obj.markers.push(newMarker);
-					 });       
+					});       
 				}
 			}
 		},
+		
+		geocodeAddr: function(address, cb) {
+			this.geocoder.geocode({
+		        'address': address
+		    }, function (results, status) {
+		        cb(results[0].geometry.location, address);
+		    });
+		}, // Getting our geocode face on
+		
 		authenticate: function() {},
 		mapFunctions: function() {},
 		detectMap: function() {
