@@ -83,20 +83,21 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 				if(typeof markers[i] === 'object') { // we have a full object to interpret
 					if(markers[i].location) {
 						var obj = this;
-						this.geocodeAddr(markers[i].location, function(location, markerAddress) {
+						this.geocodeAddr(markers[i].location, function(location, markerObj) {
+							console.log(markerObj);
 							var newMarker = new google.maps.Marker({
 								position: location, 
 								map: theMap,
-								title: markers[i].name
+								title: markerObj.name
 							});
 							
 							var infowindow = new google.maps.InfoWindow({
-								content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + markerAddress + '</h1></div>'
+								content: markerObj.iwindow.content || '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + markerObj.name + '</h1></div>'
 							});
 							
 							google.maps.event.addListener(newMarker, 'click', function() {  infowindow.open(theMap,newMarker); });
 							obj.markers.push(newMarker);
-						});
+						}, markers[i]);
 						
 						//var markerInfo = markers[i]; // TODO: Pass marker info/object through to geocode callback (somehow)
 						/*this.geocoder.geocode( {'address': markers[i].location }, function(results, status) {
@@ -117,29 +118,30 @@ Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'}
 					}					 
 				} else {
 					var obj = this;
-					this.geocodeAddr(markers[i], function(location, markerAddress) {
+					this.geocodeAddr(markers[i], function(location, marker) {
+						console.log(marker);
 						var newMarker = new google.maps.Marker({
 						      position: location, 
 						      map: theMap,
-						      title:markerAddress
+						      title:marker
 						});
 						
 						var infowindow = new google.maps.InfoWindow({
-							content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + markerAddress + '</h1></div>'
+							content: '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">' + marker + '</h1></div>'
 						});
 						
 						google.maps.event.addListener(newMarker, 'click', function() { infowindow.open(theMap,newMarker); });
 						obj.markers.push(newMarker);
-					});       
+					}, markers[i]);       
 				}
 			}
 		},
 		
-		geocodeAddr: function(address, cb) {
+		geocodeAddr: function(address, cb, markerObj) {
 			this.geocoder.geocode({
 		        'address': address
 		    }, function (results, status) {
-		        cb(results[0].geometry.location, address);
+		        cb(results[0].geometry.location, markerObj);
 		    });
 		}, // Getting our geocode face on
 		
