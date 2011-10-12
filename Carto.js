@@ -1,8 +1,6 @@
-/*
-
-Carto.init({center: 'London, UK', markers: ['London, UK', 'Paris'], el: '#main'});
-
-/**/
+//     carto.js
+//     (c) 2011 Ian Culshaw
+//     carto.js may be freely distributed under the MIT license.
 
 (function() {
 
