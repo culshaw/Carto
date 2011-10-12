@@ -5,14 +5,15 @@
 </head>
 
 <body>
-    <div id="main" role="main" style="width: 500px; height: 500px;"></div> 	
+    <div id="main" role="main" style="width: 500px; height: 500px;"></div> 	 	
   	<!-- Load Carto -->
-  	<script src="carto.min.js"></script>  
+  	<script src="carto.js"></script>  
   	
   	<script>
-  		Carto.init(
+  		var myMap = Carto.init(
 			{
-				type: 'gmap',
+				provider: 'gmap',
+				type: 'satellite',
 				zoom: 4,
 				sensor: true,
 				center: 'London, UK', // Map center

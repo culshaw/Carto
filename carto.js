@@ -1,14 +1,11 @@
-//     carto.js
-//     (c) 2011 Ian Culshaw
-//     carto.js may be freely distributed under the MIT license.
-
 (function() {
 
-	// Define our object
+// Define our object
 	var Cartograph = {
 		map: false,
 		actualMap: false,
 		el: false,
+		provider: false,
 		type: false,
 		sensor: false,
 		geocoder: false,
@@ -16,10 +13,11 @@
 		markers: [],
 		polylines: [],
 		directions: [],
+		mapTypes: [],
+		animations: [],
 		init:function(options) {
 		
 			// Capture our map points
-			
 			/*
 			Unsure of tackling these just yet
 			
@@ -27,13 +25,14 @@
 			this.directions = options.directions || false;/**/
 			
 			// Detect map type
+			this.provider = options.provider || false;
 			this.type = options.type || false;
 			this.el = options.element || false;
 			this.center = options.center || false;
 			this.zoom = options.zoom || 8;
 			this.markers = options.markers || [];
 						
-			switch(this.type) { 
+			switch(this.provider) { 
 				case 'gmap':
 					var script = document.createElement("script");
 					script.type = "text/javascript";
@@ -56,8 +55,13 @@
 			// If a text string is given we need to geocode the string to get the lat/long
 			if(typeof this.center == 'string') {
 				var obj = this;
-				switch(this.type) {
+				switch(this.provider) {
 					case 'gmap':
+					
+						this.animations = google.maps.Animation;
+						this.mapTypes = google.maps.MapTypeId;
+						
+						
 						this.geocoder.geocode( {'address': this.center }, function(results, status) {
 							obj.center = results[0].geometry.location;
 							obj.actualMap = obj.draw();
@@ -82,10 +86,10 @@
 					if(markers[i].location) {
 						var obj = this;
 						this.geocodeAddr(markers[i].location, function(location, markerObj) {
-							console.log(markerObj);
 							var newMarker = new google.maps.Marker({
 								position: location, 
 								map: theMap,
+								icon: markerObj.image || '',
 								title: markerObj.name
 							});
 							
@@ -154,7 +158,7 @@
 		
 		getMapObj: function() {
 			// Grasp the map type and associate
-			switch (this.type) {
+			switch (this.provider) {
 				case 'gmap':
 					this.geocoder = new google.maps.Geocoder();
 					this.map = window.google.maps;
@@ -183,7 +187,7 @@
 		// Put the map on the canvas
 		draw: function() {
 			// For future implementations of other maps being integrated.
-			switch(this.type) {
+			switch(this.provider) {
 				case 'gmap':
 					var myOptions = {
 				      zoom: this.zoom,
@@ -204,6 +208,5 @@
 		}
 		
 	}
-	
 	if(!window.Carto){window.Carto=Cartograph;}//We create a shortcut for our framework, we can call the methods by $$.method();
 })();
