@@ -11,27 +11,27 @@ alpha usage as follows:
 
 ```
 Carto.init(
-			{
-				provider: 'gmap',
-				type: 'satellite',
-				zoom: 4,
-				sensor: true,
-				center: 'London, UK', // Map center
-				markers: [
-					'London, UK', // String based marker (automatic geocoding)
-					'Paris', 
-					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
-						iwindow: { content: 'this will pop up in a standard info window' } // Info window
-					},
-					{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
-				], // Pins
-				polylines: [
-					{pointers: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
-					{pointers: ['Gothenburg', 'Copenhagen', 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
-				],
-				element: '#main' // Target element
-			}
-		);
+	{
+		provider: 'gmap',
+		type: 'satellite',
+		zoom: 4,
+		sensor: true,
+		center: 'London, UK', // Map center
+		markers: [
+			'London, UK', // String based marker (automatic geocoding)
+			'Paris', 
+			{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
+				iwindow: { content: 'this will pop up in a standard info window' } // Info window
+			},
+			{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
+		], // Pins
+		polylines: [
+			{pointers: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
+			{pointers: ['Gothenburg', 'Copenhagen', 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
+		],
+		element: '#main' // Target element
+	}
+);
 
 ```
 
