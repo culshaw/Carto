@@ -87,12 +87,11 @@
 				var polyline = polylines[i];
 				if(typeof polyline == 'object') {
 					var polylineBuilder = [];
-					for(j = 0; j < polyline.pointers.length; j++) {
-						var polylineDetails = {totalPointers: polyline.pointers.length, polyline: polyline, builder: polylineBuilder};
-						this.geocodeAddr(polyline.pointers[j], function(location, polylineDetails) {
+					for(j = 0; j < polyline.waypoints.length; j++) {
+						var polylineDetails = {totalPointers: polyline.waypoints.length, polyline: polyline, builder: polylineBuilder};
+						this.geocodeAddr(polyline.waypoints[j], function(location, polylineDetails) {
 							polylineDetails.builder.push(location);
 							if(polylineDetails.totalPointers === polylineDetails.builder.length) {
-								console.log(polylineDetails.builder, 'COMPLETE');
 								var flightPath = new google.maps.Polyline({
 									path: polylineDetails.builder,
 									strokeColor: polylineDetails.polyline.colour,
