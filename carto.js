@@ -15,7 +15,7 @@
 		directions: [],
 		mapTypes: [],
 		animations: [],
-		geocodeCache: [],
+		realignedPolylines: [],
 		init:function(options) {
 		
 			// Capture our map points
@@ -105,44 +105,45 @@
 								flightPath.setMap(theMap);
 							}
 						} else {
-							this.geocodeAddr(polyline.waypoints[j], function(location, polylineDetails) {
+							this.geocodeAddr(polyline.waypoints[j], function(location, polylineDetails, obj) {
+								obj.realignedPolylines = [];
 								polylineDetails.builder.push({location: location, address: polylineDetails.originalWaypoints[polylineDetails.currentMarker]});
 								if(polylineDetails.totalPointers === polylineDetails.builder.length) {
 									// So all of our polylines are now resolved but there is a good chance they are in the wrong order if you are using a multiple of addresses and lat/lngs
 									for(var k = 0; k < polylineDetails.totalPointers; k++) {
 										for(var l = 0; l < polylineDetails.totalPointers; l++) {
+											//console.log(polylineDetails.originalWaypoints[k], polylineDetails.builder[l]);
 											if(polylineDetails.originalWaypoints[k] === polylineDetails.builder[l].address) {
-												if(l === k) { } else {
-													console.log('CHEAT', polylineDetails.builder[l].address);
+											//	console.log(polylineDetails.builder[l]);
+												obj.realignedPolylines[k] = polylineDetails.builder[l].location;
+												//console.log();
+												if(k === l) { } else {
+													//console.log('CHEAT', polylineDetails.builder[l].address);
+													
 												}
+											} else if(polylineDetails.builder[l].address == undefined) {
+												obj.realignedPolylines[k] = polylineDetails.builder[l];
 											}
-										}
-										if(polylineDetails.originalWaypoints[k] === polylineDetails.builder[k].address) {
-											// The polyline is in the right place
-										} else {
-											// Cheat!!
-//											console.log('cheat!');
-//											polylineDetails.builder.shift()
-//											console.log(polylineDetails.originalWaypoints[k], polylineDetails.builder[k].address);
 										}
 										//console.log(polylineDetails.originalWaypoints.indexOf())
 									}
-								/*	var flightPath = new google.maps.Polyline({
-										path: polylineDetails.builder,
+									
+									var flightPath = new google.maps.Polyline({
+										path: obj.realignedPolylines,
 										strokeColor: polylineDetails.polyline.colour,
 										strokeOpacity: polylineDetails.polyline.opacity,
 										strokeWeight: polylineDetails.polyline.weight
 									});
 									flightPath.setMap(theMap);/**/
-									console.log(polylines);
-									console.log(polylineDetails);
+									//console.log(polylines);
+									//console.log(polylineDetails);
 									
 									
 									
 									return;
 									
 								}
-							}, polylineDetails);
+							}, polylineDetails, this);
 						}
 					}
 				} else {
@@ -157,7 +158,7 @@
 				if(typeof markers[i] === 'object') { // we have a full object to interpret
 					if(markers[i].location) {
 						var obj = this;
-						this.geocodeAddr(markers[i].location, function(location, markerObj) {
+						this.geocodeAddr(markers[i].location, function(location, markerObj, obj) {
 													
 							var newMarker = new google.maps.Marker({
 								position: location, 
@@ -172,7 +173,7 @@
 							
 							google.maps.event.addListener(newMarker, 'click', function() {  infowindow.open(theMap,newMarker); });
 							obj.markers.push(newMarker);
-						}, markers[i]);
+						}, markers[i], this);
 						
 						//var markerInfo = markers[i]; // TODO: Pass marker info/object through to geocode callback (somehow)
 						/*this.geocoder.geocode( {'address': markers[i].location }, function(results, status) {
@@ -193,7 +194,7 @@
 					}					 
 				} else {
 					var obj = this;
-					this.geocodeAddr(markers[i], function(location, marker) {
+					this.geocodeAddr(markers[i], function(location, marker, obj) {
 						var newMarker = new google.maps.Marker({
 						      position: location, 
 						      map: theMap,
@@ -207,12 +208,12 @@
 						
 						google.maps.event.addListener(newMarker, 'click', function() { infowindow.open(theMap,newMarker); });
 						obj.markers.push(newMarker);
-					}, markers[i]);       
+					}, markers[i], this);       
 				}
 			}
 		},
 		
-		geocodeAddr: function(address, cb, pushbackObj) {
+		geocodeAddr: function(address, cb, pushbackObj, obj) {
 					
 			this.geocoder.geocode({
 		        'address': address
@@ -220,7 +221,7 @@
 		    	if(status === 'OK') {
 		    		//console.log(status);
 		    		//console.log(obj);
-			        cb(results[0].geometry.location, pushbackObj);
+			        cb(results[0].geometry.location, pushbackObj, obj);
 			    }
 		    });
 		}, // Getting our geocode face on
