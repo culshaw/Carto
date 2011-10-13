@@ -1,6 +1,6 @@
 (function() {
 
-// Define our object
+	// Define our object
 	var Cartograph = {
 		map: false,
 		actualMap: false,
@@ -15,6 +15,7 @@
 		directions: [],
 		mapTypes: [],
 		animations: [],
+		geocodeCache: [],
 		init:function(options) {
 		
 			// Capture our map points
@@ -88,9 +89,12 @@
 				if(typeof polyline == 'object') {
 					var polylineBuilder = [];
 					for(j = 0; j < polyline.waypoints.length; j++) {
-						var polylineDetails = {totalPointers: polyline.waypoints.length, polyline: polyline, builder: polylineBuilder};
-						this.geocodeAddr(polyline.waypoints[j], function(location, polylineDetails) {
-							polylineDetails.builder.push(location);
+						var waypoint = polyline.waypoints[j];
+						var polylineDetails = {totalPointers: polyline.waypoints.length, originalWaypoints: polyline.waypoints, polyline: polyline, builder: polylineBuilder, currentMarker: j};
+						
+						if(typeof waypoint == 'object') {
+							var location = new google.maps.LatLng(waypoint.lat, waypoint.long);	
+							polylineDetails.builder.push(location);								
 							if(polylineDetails.totalPointers === polylineDetails.builder.length) {
 								var flightPath = new google.maps.Polyline({
 									path: polylineDetails.builder,
@@ -100,7 +104,46 @@
 								});
 								flightPath.setMap(theMap);
 							}
-						}, polylineDetails);
+						} else {
+							this.geocodeAddr(polyline.waypoints[j], function(location, polylineDetails) {
+								polylineDetails.builder.push({location: location, address: polylineDetails.originalWaypoints[polylineDetails.currentMarker]});
+								if(polylineDetails.totalPointers === polylineDetails.builder.length) {
+									// So all of our polylines are now resolved but there is a good chance they are in the wrong order if you are using a multiple of addresses and lat/lngs
+									for(var k = 0; k < polylineDetails.totalPointers; k++) {
+										for(var l = 0; l < polylineDetails.totalPointers; l++) {
+											if(polylineDetails.originalWaypoints[k] === polylineDetails.builder[l].address) {
+												if(l === k) { } else {
+													console.log('CHEAT', polylineDetails.builder[l].address);
+												}
+											}
+										}
+										if(polylineDetails.originalWaypoints[k] === polylineDetails.builder[k].address) {
+											// The polyline is in the right place
+										} else {
+											// Cheat!!
+//											console.log('cheat!');
+//											polylineDetails.builder.shift()
+//											console.log(polylineDetails.originalWaypoints[k], polylineDetails.builder[k].address);
+										}
+										//console.log(polylineDetails.originalWaypoints.indexOf())
+									}
+								/*	var flightPath = new google.maps.Polyline({
+										path: polylineDetails.builder,
+										strokeColor: polylineDetails.polyline.colour,
+										strokeOpacity: polylineDetails.polyline.opacity,
+										strokeWeight: polylineDetails.polyline.weight
+									});
+									flightPath.setMap(theMap);/**/
+									console.log(polylines);
+									console.log(polylineDetails);
+									
+									
+									
+									return;
+									
+								}
+							}, polylineDetails);
+						}
 					}
 				} else {
 					
@@ -115,6 +158,7 @@
 					if(markers[i].location) {
 						var obj = this;
 						this.geocodeAddr(markers[i].location, function(location, markerObj) {
+													
 							var newMarker = new google.maps.Marker({
 								position: location, 
 								map: theMap,
@@ -150,7 +194,6 @@
 				} else {
 					var obj = this;
 					this.geocodeAddr(markers[i], function(location, marker) {
-						console.log(marker);
 						var newMarker = new google.maps.Marker({
 						      position: location, 
 						      map: theMap,
@@ -170,10 +213,13 @@
 		},
 		
 		geocodeAddr: function(address, cb, pushbackObj) {
+					
 			this.geocoder.geocode({
 		        'address': address
 		    }, function (results, status) {
 		    	if(status === 'OK') {
+		    		//console.log(status);
+		    		//console.log(obj);
 			        cb(results[0].geometry.location, pushbackObj);
 			    }
 		    });
