@@ -26,8 +26,8 @@ Carto.init(
 			{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
 		], // Pins
 		polylines: [
-			{pointers: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
-			{pointers: ['Gothenburg', 'Copenhagen', 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
+			{waypoints: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
+			{waypoints: ['Gothenburg', 'Copenhagen', 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
 		],
 		element: '#main' // Target element
 	}
