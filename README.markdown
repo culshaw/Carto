@@ -21,7 +21,7 @@ Carto.init(
 					'London, UK', // String based marker (automatic geocoding)
 					'Paris', 
 					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
-						iwindow: { content: infoWindowContent } // Info window
+						iwindow: { content: 'this will pop up in a standard info window' } // Info window
 					},
 					{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
 				], // Pins
