@@ -31,6 +31,7 @@
 			this.center = options.center || false;
 			this.zoom = options.zoom || 8;
 			this.markers = options.markers || [];
+			this.polylines = options.polylines || [];
 						
 			switch(this.provider) { 
 				case 'gmap':
@@ -67,6 +68,7 @@
 							obj.actualMap = obj.draw();
 							if(obj.actualMap) {
 								obj.pushMarkers(obj.markers, obj.actualMap);
+								obj.pushPolylines(obj.polylines, obj.actualMap);
 								return obj;
 							}
 				        });/**/
@@ -75,6 +77,34 @@
 					case 'ovi':
 						alert('Support not implemented');
 					break;
+				}
+			}
+		},
+		// Push polylines into the map
+		pushPolylines: function(polylines, theMap) {
+			var polyLength = polylines.length;
+			for(var i = 0; i < polyLength; i++) {
+				var polyline = polylines[i];
+				if(typeof polyline == 'object') {
+					var polylineBuilder = [];
+					for(j = 0; j < polyline.pointers.length; j++) {
+						var polylineDetails = {totalPointers: polyline.pointers.length, polyline: polyline, builder: polylineBuilder};
+						this.geocodeAddr(polyline.pointers[j], function(location, polylineDetails) {
+							polylineDetails.builder.push(location);
+							if(polylineDetails.totalPointers === polylineDetails.builder.length) {
+								console.log(polylineDetails.builder, 'COMPLETE');
+								var flightPath = new google.maps.Polyline({
+									path: polylineDetails.builder,
+									strokeColor: polylineDetails.polyline.colour,
+									strokeOpacity: polylineDetails.polyline.opacity,
+									strokeWeight: polylineDetails.polyline.weight
+								});
+								flightPath.setMap(theMap);
+							}
+						}, polylineDetails);
+					}
+				} else {
+					
 				}
 			}
 		},
@@ -110,7 +140,7 @@
 							}));
 						});/**/
 					} else {
-						var newMarker = new google.maps.Marker({ position: new google.maps.LatLng(markers[i].lat, markers[i].long), map: theMap, title: markers[i].name });
+						var newMarker = new google.maps.Marker({ position: new google.maps.LatLng(markers[i].lat, markers[i].long), map: theMap, title: markers[i].name, icon: markers[i].image || '' });
 						// Basic infowindow implementation to make sure info is being retained in the marker
 						var infowindow = new google.maps.InfoWindow({
 							content: markers[i].iwindow.content
@@ -125,6 +155,7 @@
 						var newMarker = new google.maps.Marker({
 						      position: location, 
 						      map: theMap,
+						      // There is never a marker here because they are only passing the location name
 						      title:marker
 						});
 						
@@ -139,11 +170,13 @@
 			}
 		},
 		
-		geocodeAddr: function(address, cb, markerObj) {
+		geocodeAddr: function(address, cb, pushbackObj) {
 			this.geocoder.geocode({
 		        'address': address
 		    }, function (results, status) {
-		        cb(results[0].geometry.location, markerObj);
+		    	if(status === 'OK') {
+			        cb(results[0].geometry.location, pushbackObj);
+			    }
 		    });
 		}, // Getting our geocode face on
 		
