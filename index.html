@@ -7,7 +7,7 @@
 <body>
     <div id="main" role="main" style="width: 500px; height: 500px;"></div> 	 	
   	<!-- Load Carto -->
-  	<script src="carto.js"></script>  
+  	<script src="carto.min.js"></script>  
   	
   	<script>
   		
@@ -32,6 +32,18 @@
 					{waypoints: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
 					{waypoints: ['Copenhagen', {lat: 37.772323, long: -122.214897}, 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
 				],
+				directions: {
+					from: 'London, UK',
+					to: 'Baghdad, Iraq',
+					waypoints: [
+						{location: 'Paris, France', stopover: false},
+						{location: 'Berlin, Germany', stopover: false},
+						{location: 'Prague', stopover: false}
+					],
+					travel: 'driving', // Driving, Bicycling (USA) or walking works
+					units: 'imperial', // or metric.
+					alternatives: true
+				},
 				element: '#main' // Target element
 			}
 		);

@@ -14,6 +14,8 @@
 		polylines: [],
 		directions: [],
 		mapTypes: [],
+		unitMetrics:[],
+		travelModes:[],
 		animations: [],
 		realignedPolylines: [],
 		init:function(options) {
@@ -21,8 +23,7 @@
 			// Capture our map points
 			/*
 			Unsure of tackling these just yet
-			
-			this.polylines = options.polylines || false;
+
 			this.directions = options.directions || false;/**/
 			
 			// Detect map type
@@ -33,6 +34,7 @@
 			this.zoom = options.zoom || 8;
 			this.markers = options.markers || [];
 			this.polylines = options.polylines || [];
+			this.directions = options.directions || [];
 						
 			switch(this.provider) { 
 				case 'gmap':
@@ -70,6 +72,7 @@
 							if(obj.actualMap) {
 								obj.pushMarkers(obj.markers, obj.actualMap);
 								obj.pushPolylines(obj.polylines, obj.actualMap);
+								obj.pushDirections(obj.directions, obj.actualMap);
 								return obj;
 							}
 				        });/**/
@@ -80,6 +83,48 @@
 					break;
 				}
 			}
+		},
+		// Push directions onto the map
+		pushDirections: function(directions, theMap) {
+			this.directionsService = new google.maps.DirectionsService();
+			this.directionsDisplay = new google.maps.DirectionsRenderer();
+			
+			this.travelModes = google.maps.TravelMode;
+			this.unitMetrics = google.maps.UnitSystem;
+			
+			// Set travel modes
+			for(var key in this.travelModes) {
+				if(key === directions.travel.toUpperCase()) {
+					directions.travel = this.travelModes[key];
+				}
+			}
+			
+			// Set unit metrics
+			for(var key in this.unitMetrics) {
+				if(key === directions.units.toUpperCase()) {
+					directions.units = this.unitMetrics[key];
+				}
+			}
+						
+			var directionsObj = {
+				origin: directions.from,
+				destination: directions.to,
+				waypoints: directions.waypoints || {},
+				provideRouteAlternatives: directions.alternatives || false,
+				travelMode: directions.travel,
+				unitSystem: directions.units
+			};
+			
+			// Prime the directions request
+			directionsDisplay = this.directionsDisplay;
+			this.directionsService.route(directionsObj, function(result, status) {
+				if(status === google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(result);
+				}
+			});
+			
+			
+			this.directionsDisplay.setMap(theMap);
 		},
 		// Push polylines into the map
 		pushPolylines: function(polylines, theMap) {
