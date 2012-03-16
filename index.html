@@ -1,22 +1,25 @@
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
-  <meta charset="utf-8">
+	<meta charset="utf-8">
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 
 <body>
-    <div id="main" role="main" style="width: 500px; height: 500px;"></div> 	 	
+    <div id="main" role="main" style="width: 500px; height: 500px; float: left;"></div>
+    
+    <div id="main2" role="main" style="width: 500px; height: 500px; float: left;"></div>
   	<!-- Load Carto -->
-  	<script src="carto.min.js"></script>  
-  	
+  	<!--<script src="carto.min.js"></script>-->
+  	<script type="text/javascript" src="carto.js"></script>
   	<script>
   		
   		var infoWindowContent = '<div id="content"><div id="siteNotice"></div><h1 id="firstHeading" class="firstHeading">Uluru</h1><div id="bodyContent"><p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large sandstone rock formation in the southern part of the Northern Territory, central Australia. It lies 335 km (208 mi) south west of the nearest large town, Alice Springs; 450 km (280 mi) by road. Kata Tjuta and Uluru are the two major features of the Uluru - Kata Tjuta National Park. Uluru is sacred to the Pitjantjatjara and Yankunytjatjara, the Aboriginal people of the area. It has many springs, waterholes, rock caves and ancient paintings. Uluru is listed as a World Heritage Site.</p><p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">http://en.wikipedia.org/w/index.php?title=Uluru</a> (last visited June 22, 2009).</p></div></div>';
   	
-  		var myMap = Carto.init(
+  		myMap = new Carto(
 			{
 				provider: 'gmap',
-				type: 'satellite',
+				type: 'roadmap',
 				zoom: 4,
 				sensor: true,
 				center: 'London, UK', // Map center
@@ -29,24 +32,44 @@
 					{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
 				], // Pins
 				polylines: [
-					{waypoints: ['London, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
+					{waypoints: ['Cambridge, UK', 'Paris', 'Lisbon'], colour: '#ff0000', weight: 3, opacity: 1.0},
 					{waypoints: ['Copenhagen', {lat: 37.772323, long: -122.214897}, 'Munich', 'Cologne', 'Marseille'], colour: '#0000ff', weight: 1, opacity: 1.0},
 				],
-				directions: {
-					from: 'London, UK',
+				/*directions: {
+					from: 'Bristol, UK',
 					to: 'Baghdad, Iraq',
 					waypoints: [
-						{location: 'Paris, France', stopover: false},
+						{location: 'Lille, France', stopover: false},
 						{location: 'Berlin, Germany', stopover: false},
 						{location: 'Prague', stopover: false}
 					],
 					travel: 'driving', // Driving, Bicycling (USA) or walking works
 					units: 'imperial', // or metric.
 					alternatives: true
-				},
+				},/**/
 				element: '#main' // Target element
 			}
-		);
+		);/**/
+		
+		myMap2 = new Carto(
+			{
+				provider: 'gmap',
+				type: 'terrain',
+				zoom: 4,
+				debug: true,
+				sensor: true,
+				center: 'London, UK', // Map center
+				markers: [
+					'London, UK', // String based marker (automatic geocoding)
+					'Paris', 
+					{long: -3.160278, lat: 55.949444, image: '', name: 'Edinburgh', // Long and lat based object marker
+						iwindow: { content: infoWindowContent } // Info window
+					},
+					{location: 'Llandudno, Wales', image: 'newPin.png', name: 'Llandudno', iwindow: { content: 'This is all about llandudno' }} // Location based object marker (automatic geocode) 
+				], // Pins
+				element: '#main2' // Target element
+			}
+		);/**/
   	</script>
 </body>
 </html>
